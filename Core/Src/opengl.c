@@ -10,10 +10,15 @@
 
 #include <cpu.h>
 
-#include "keyboard.h"
+#include "keyboard.h"ç
 
+#define LCD_FRAMEBUFFER ((uint16_t *)0xC0000000)  // dirección típica SDRAM
+#define LCD_WIDTH  480
+#define LCD_HEIGHT 272
 #define WIDTH 160
 #define HEIGHT 144
+
+LTDC_HandleTypeDef hltdc;
 
 int window_width = WIDTH;
 int window_height = HEIGHT;
@@ -24,15 +29,21 @@ Frame buffer;
 
 
 static void draw_pixel(unsigned char x, unsigned char y, unsigned short color) {
+
+    LCD_FRAMEBUFFER[y * LCD_WIDTH + x] = color;
+
+    /*
     glPointSize(window_width / (float)WIDTH);
     glBegin(GL_POINTS);
     glColor3f((float)(color & 0x1f) / 32, (float)((color >> 5) & 0x1f) / 32, (float)((color >> 10) & 0x1f) / 32);
     glVertex2i(x, y);
     glEnd();
+    */
 }
 
 static void display() {
-    window_width = glutGet(GLUT_WINDOW_WIDTH);
+	/*
+	window_width = glutGet(GLUT_WINDOW_WIDTH);
     window_height = glutGet(GLUT_WINDOW_HEIGHT);
 
     glLoadIdentity();
@@ -47,6 +58,17 @@ static void display() {
     }
 
     glutSwapBuffers();
+    */
+	for (unsigned char y = 0; y < HEIGHT; y++) {
+	        for (unsigned char x = 0; x < WIDTH; x++) {
+	        	 uint16_t color = buffer.buffer[y][x];
+	        	 LCD_FRAMEBUFFER[y * LCD_WIDTH + x] = color;
+	        }
+	    }
+
+	    DMA2D_CopyBuffer((uint32_t)buffer.buffer, (uint32_t)LCD_FRAMEBUFFER,
+	                     WIDTH, HEIGHT, LCD_WIDTH);
+
 }
 
 static void idle_func() {
