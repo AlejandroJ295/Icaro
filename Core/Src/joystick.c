@@ -5,36 +5,97 @@
  *      Author: zomeg
  */
 
-void controlsJoystickTask(void * pargs){
+#include "joystick.h"
+extern TaskHandle_t screenTaskHandle
 
-	while(1){
-		if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_RESET) press(RIGHT);
-		    else release(RIGHT);
+void controlsJoystickTask(void * pargs)
+{
+    while (1)
+    {
+        if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_RESET)
+        {
+            press(RIGHT);
+            xTaskNotifyGive(screenTaskHandle);
+        }
+        else
+        {
+            release(RIGHT);
+        }
 
-		    if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) == GPIO_PIN_RESET) press(LEFT);
-		    else release(LEFT);
+        if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) == GPIO_PIN_RESET)
+        {
+            press(LEFT);
+            xTaskNotifyGive(screenTaskHandle);
+        }
+        else
+        {
+            release(LEFT);
+        }
 
-		    if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_2) == GPIO_PIN_RESET) press(UP);
-		    else release(UP);
+        if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_2) == GPIO_PIN_RESET)
+        {
+            press(UP);
+            xTaskNotifyGive(screenTaskHandle);
+        }
+        else
+        {
+            release(UP);
+        }
 
-		    if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_3) == GPIO_PIN_RESET) press(DOWN);
-		    else release(DOWN);
+        if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_3) == GPIO_PIN_RESET)
+        {
+            press(DOWN);
+            xTaskNotifyGive(screenTaskHandle);
+        }
+        else
+        {
+            release(DOWN);
+        }
 
-		    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_0) == GPIO_PIN_RESET) press(CBOY_KEY_A);
-		    else release(CBOY_KEY_A);
+        if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_0) == GPIO_PIN_RESET)
+        {
+            press(CBOY_KEY_A);
+            xTaskNotifyGive(screenTaskHandle);
+        }
+        else
+        {
+            release(CBOY_KEY_A);
+        }
 
-		    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1) == GPIO_PIN_RESET) press(CBOY_KEY_B);
-		    else release(CBOY_KEY_B);
+        if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1) == GPIO_PIN_RESET)
+        {
+            press(CBOY_KEY_B);
+            xTaskNotifyGive(screenTaskHandle);
+        }
+        else
+        {
+            release(CBOY_KEY_B);
+        }
 
-		    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_2) == GPIO_PIN_RESET) press(SELECT);
-		    else release(SELECT);
+        if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_2) == GPIO_PIN_RESET)
+        {
+            press(SELECT);
+            xTaskNotifyGive(screenTaskHandle);
+        }
+        else
+        {
+            release(SELECT);
+        }
 
-		    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_3) == GPIO_PIN_RESET) press(START);
-		    else release(START);
+        if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_3) == GPIO_PIN_RESET)
+        {
+            press(START);
+            xTaskNotifyGive(screenTaskHandle);
+        }
+        else
+        {
+            release(START);
+        }
 
-		    vTaskDelete(NULL);
-	}
+        vTaskDelete(NULL);
+    }
 }
+
 
 void createJoystickTask(){
 	xTaskCreate(controlsJoystickTask, "controlsJoystickTask", 128, NULL, 1, NULL);

@@ -10,7 +10,7 @@
 
 #include <cpu.h>
 
-#include "keyboard.h"ç
+#include "keyboard.h"
 
 #define LCD_FRAMEBUFFER ((uint16_t *)0xC0000000)  // dirección típica SDRAM
 #define LCD_WIDTH  480
@@ -59,12 +59,12 @@ static void display() {
 
     glutSwapBuffers();
     */
-	for (unsigned char y = 0; y < HEIGHT; y++) {
-	        for (unsigned char x = 0; x < WIDTH; x++) {
-	        	 uint16_t color = buffer.buffer[y][x];
-	        	 LCD_FRAMEBUFFER[y * LCD_WIDTH + x] = color;
-	        }
-	    }
+	//for (unsigned char y = 0; y < HEIGHT; y++) {
+	//        for (unsigned char x = 0; x < WIDTH; x++) {
+	//        	 uint16_t color = buffer.buffer[y][x];
+	//        	 LCD_FRAMEBUFFER[y * LCD_WIDTH + x] = color;
+	//        }
+	//    }
 
 	    DMA2D_CopyBuffer((uint32_t)buffer.buffer, (uint32_t)LCD_FRAMEBUFFER,
 	                     WIDTH, HEIGHT, LCD_WIDTH);
@@ -73,24 +73,59 @@ static void display() {
 
 static void idle_func() {
     buffer = next_frame();
-    glutPostRedisplay();
+    display();
 }
 
 void display_loop() {
-    int argc = 0;
-    glutInit(&argc, 0);
-    glutInitDisplayMode(GL_DOUBLE);
-    glutInitWindowSize(WIDTH * 4, HEIGHT * 4);
-    glutCreateWindow("cboy");
-    glutDisplayFunc(display);
-    glutIdleFunc(idle_func);
-    glutSpecialFunc(special_key_handler);
-    glutSpecialUpFunc(special_key_up_handler);
-    glutKeyboardFunc(normal_key_handler);
-    glutKeyboardUpFunc(normal_key_up_handler);
-    glutMainLoop();
+    //int argc = 0;
+    //glutInit(&argc, 0);
+    //glutInitDisplayMode(GL_DOUBLE);
+    //glutInitWindowSize(WIDTH * 4, HEIGHT * 4);
+    //glutCreateWindow("cboy");
+    //glutDisplayFunc(display);
+    //glutIdleFunc(idle_func);
+    //glutSpecialFunc(special_key_handler);
+    //glutSpecialUpFunc(special_key_up_handler);
+    //glutKeyboardFunc(normal_key_handler);
+    //glutKeyboardUpFunc(normal_key_up_handler);
+    //glutMainLoop();
+
+	while (1){
+		buffer = next_frame();
+		display();
+		poll_buttons();
+	}
 }
 
+void poll_buttons(void)
+{
+	if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_RESET) press(RIGHT);
+	    else release(RIGHT);
+
+	    if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) == GPIO_PIN_RESET) press(LEFT);
+	    else release(LEFT);
+
+	    if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_2) == GPIO_PIN_RESET) press(UP);
+	    else release(UP);
+
+	    if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_3) == GPIO_PIN_RESET) press(DOWN);
+	    else release(DOWN);
+
+	    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_0) == GPIO_PIN_RESET) press(CBOY_KEY_A);
+	    else release(CBOY_KEY_A);
+
+	    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1) == GPIO_PIN_RESET) press(CBOY_KEY_B);
+	    else release(CBOY_KEY_B);
+
+	    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_2) == GPIO_PIN_RESET) press(SELECT);
+	    else release(SELECT);
+
+	    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_3) == GPIO_PIN_RESET) press(START);
+	    else release(START);
+
+}
+
+/*
 void toggle_fullscreen() {
     if (!fullscreen) {
         glutFullScreen();
@@ -100,3 +135,4 @@ void toggle_fullscreen() {
     }
     fullscreen = !fullscreen;
 }
+*/
